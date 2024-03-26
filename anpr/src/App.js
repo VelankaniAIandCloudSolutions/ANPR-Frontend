@@ -1,9 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import Dashboard from "./components/Views/Dashboard";
+import Dashboard from "./Views/Dashboard";
 import AppHeader from "./components/Layout/AppHeader";
 import AppSidebar from "./components/Layout/AppSidebar";
-import VehicleReport from "./components/Views/VehicleReport";
+import VehicleReport from "./Views/VehicleReport";
 
 export default function App() {
   return (
