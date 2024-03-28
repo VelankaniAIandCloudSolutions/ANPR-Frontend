@@ -2,26 +2,42 @@ import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import VehicleReportGrid from "./Views/VehicleReportGrid";
+import VehicleReportGrid from "../components/VehicleReport/VehicleReportGrid";
 
 function VehicleReport() {
   const [report, setReport] = useState([]);
-
-  const generateReport = () => {
-    axios
-      .get("get-vehicle-report")
-      .then((response) => {
-        setReport(response.data);
-        toast.success("Report generated successfully");
-      })
-      .catch((error) => {
-        toast.error("Failed to generate report");
-        console.error("Error fetching report:", error);
-      });
-  };
-  // State variables for start date and end date
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+
+  const generateReport = async () => {
+    try {
+      // const response = await axios.get("get-vehicle-report");
+      const sampleData = [
+        {
+          id: 1,
+          vehicleNo: "ABC123",
+          vehicleType: "Truck",
+          gateNo: "Gate 1",
+          visitType: "Entry",
+          visitDateTime: "2024-03-26 10:00:00",
+        },
+        {
+          id: 2,
+          vehicleNo: "XYZ789",
+          vehicleType: "Personal Vehicle",
+          gateNo: "Gate 2",
+          visitType: "Exit",
+          visitDateTime: "2024-03-26 11:30:00",
+        },
+      ];
+      setReport(sampleData);
+      toast.success("Report generated successfully");
+    } catch (error) {
+      toast.error("Failed to generate report");
+      console.error("Error fetching report:", error);
+    }
+  };
+  // State variables for start date and end date
 
   return (
     <div className="container">
@@ -85,7 +101,7 @@ function VehicleReport() {
         </div>
       </div>
 
-      <div className="container" style={{ marginTop: "25px" }}>
+      <div className="container" style={{ marginTop: "40px" }}>
         <VehicleReportGrid report={report} />
       </div>
     </div>
