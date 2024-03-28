@@ -8,10 +8,14 @@ function VehicleReport() {
   const [report, setReport] = useState([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const generateReport = async () => {
+    setLoading(true); // Set loading to true when API call starts
     try {
-      // const response = await axios.get("get-vehicle-report");
+      // Simulate API call delay
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       const sampleData = [
         {
           id: 1,
@@ -32,9 +36,11 @@ function VehicleReport() {
       ];
       setReport(sampleData);
       toast.success("Report generated successfully");
+      setLoading(false);
     } catch (error) {
       toast.error("Failed to generate report");
       console.error("Error fetching report:", error);
+      setLoading(false);
     }
   };
   // State variables for start date and end date
@@ -102,7 +108,18 @@ function VehicleReport() {
       </div>
 
       <div className="container" style={{ marginTop: "40px" }}>
-        <VehicleReportGrid report={report} />
+        {loading ? (
+          <div className="d-flex align-items-center">
+            <strong role="status">Loading...</strong>
+            <div
+              className="spinner-border ms-auto"
+              role="status"
+              aria-hidden="true"
+            ></div>
+          </div>
+        ) : report.length > 0 ? (
+          <VehicleReportGrid report={report} />
+        ) : null}
       </div>
     </div>
   );
