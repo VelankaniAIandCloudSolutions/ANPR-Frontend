@@ -26,7 +26,38 @@ const VehicleReportGrid = ({ report }) => {
     { headerName: "Vehicle Type", field: "vehicleType" },
     { headerName: "Gate No", field: "gateNo" },
     { headerName: "Visit Type", field: "visitType" },
-    { headerName: "Visit Date & Time", field: "visitDateTime" },
+    { headerName: "Entry Date & Time", field: "visitDateTime" },
+    { headerName: "Exit Date & Time", field: "exitDateTime" },
+    {
+      headerName: "Duration",
+      field: "duration",
+      valueGetter: (params) => {
+        const entryTime = params.data.visitDateTime;
+        const exitTime = params.data.exitDateTime;
+
+        // Check if either entryTime or exitTime is null
+        if (!entryTime || !exitTime) {
+          return null;
+        }
+
+        // Calculate duration
+        const entry = new Date(entryTime);
+        const exit = new Date(exitTime);
+        const durationInMilliseconds = exit - entry;
+
+        // Convert duration to hours and minutes
+        const hours = Math.floor(durationInMilliseconds / (1000 * 60 * 60));
+        const minutes = Math.floor(
+          (durationInMilliseconds % (1000 * 60 * 60)) / (1000 * 60)
+        );
+
+        // Format duration
+        const formattedDuration = `${hours} hr ${minutes} min`;
+
+        return formattedDuration;
+      },
+    },
+
     {
       headerName: "View Vehicle Plate",
       cellRenderer: (params) => (
