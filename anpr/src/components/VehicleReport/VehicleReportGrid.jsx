@@ -24,12 +24,14 @@ const VehicleReportGrid = ({ report }) => {
   const columnDefs = [
     { headerName: "Vehicle No", field: "vehicleNo" },
     { headerName: "Vehicle Type", field: "vehicleType" },
-    { headerName: "Gate No", field: "gateNo" },
-    { headerName: "Visit Type", field: "visitType" },
+
+    { headerName: "Entry Gate", field: "" },
+    { headerName: "Exit Gate", field: "" },
+
     { headerName: "Entry Date & Time", field: "visitDateTime" },
     { headerName: "Exit Date & Time", field: "exitDateTime" },
     {
-      headerName: "Duration",
+      headerName: "Duration Of Stay",
       field: "duration",
       valueGetter: (params) => {
         const entryTime = params.data.visitDateTime;
