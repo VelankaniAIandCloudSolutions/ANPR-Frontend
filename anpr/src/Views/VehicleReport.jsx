@@ -43,7 +43,25 @@ function VehicleReport() {
       setLoading(false);
     }
   };
+
   // State variables for start date and end date
+  // const generateReport = () => {
+  //   setLoading(true); // Set loading to true when API call starts
+  //   axios
+  //     .get("/get-vehicle-visit-repo")
+  //     .then((response) => {
+  //       const vehicleVisits = response.data;
+  //       setReport(vehicleVisits);
+  //       toast.success("Report generated successfully");
+  //     })
+  //     .catch((error) => {
+  //       toast.error("Failed to generate report");
+  //       console.error("Error fetching report:", error);
+  //     })
+  //     .finally(() => {
+  //       setLoading(false);
+  //     });
+  // };
 
   return (
     <div className="container">
