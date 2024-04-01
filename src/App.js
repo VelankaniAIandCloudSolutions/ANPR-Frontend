@@ -14,7 +14,7 @@ export default function App() {
       <div className="content-wrapper">
         <Router>
           <Switch>
-            <Route path="/" exact component={Dashboard} />
+            <Route path="/" exact component={VehicleReport} />
             <Route path="/vehicle-report" component={VehicleReport} />
             <Route path="/login" component={SignIn} />
           </Switch>
