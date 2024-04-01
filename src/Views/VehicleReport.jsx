@@ -10,58 +10,61 @@ function VehicleReport() {
   const [endDate, setEndDate] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const generateReport = async () => {
-    setLoading(true); // Set loading to true when API call starts
-    try {
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+  // const generateReport = async () => {
+  //   setLoading(true);
+  //   try {
+  //     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      const sampleData = [
-        {
-          id: 1,
-          vehicleNo: "ABC123",
-          vehicleType: "Truck",
-          gateNo: "Gate 1",
-          visitType: "Entry",
-          visitDateTime: "2024-03-26 10:00:00",
-        },
-        {
-          id: 2,
-          vehicleNo: "XYZ789",
-          vehicleType: "Personal Vehicle",
-          gateNo: "Gate 2",
-          visitType: "Exit",
-          visitDateTime: "2024-03-26 11:30:00",
-        },
-      ];
-      setReport(sampleData);
-      toast.success("Report generated successfully");
-      setLoading(false);
-    } catch (error) {
-      toast.error("Failed to generate report");
-      console.error("Error fetching report:", error);
-      setLoading(false);
-    }
-  };
+  //     const sampleData = [
+  //       {
+  //         id: 1,
+  //         vehicleNo: "ABC123",
+  //         vehicleType: "Truck",
+  //         gateNo: "Gate 1",
+  //         visitType: "Entry",
+  //         visitDateTime: "2024-03-26 10:00:00",
+  //       },
+  //       {
+  //         id: 2,
+  //         vehicleNo: "XYZ789",
+  //         vehicleType: "Personal Vehicle",
+  //         gateNo: "Gate 2",
+  //         visitType: "Exit",
+  //         visitDateTime: "2024-03-26 11:30:00",
+  //       },
+  //     ];
+  //     setReport(sampleData);
+  //     toast.success("Report generated successfully");
+  //     setLoading(false);
+  //   } catch (error) {
+  //     toast.error("Failed to generate report");
+  //     console.error("Error fetching report:", error);
+  //     setLoading(false);
+  //   }
+  // };
 
   // State variables for start date and end date
-  // const generateReport = () => {
-  //   setLoading(true); // Set loading to true when API call starts
-  //   axios
-  //     .get("/get-vehicle-visit-repo")
-  //     .then((response) => {
-  //       const vehicleVisits = response.data;
-  //       setReport(vehicleVisits);
-  //       toast.success("Report generated successfully");
-  //     })
-  //     .catch((error) => {
-  //       toast.error("Failed to generate report");
-  //       console.error("Error fetching report:", error);
-  //     })
-  //     .finally(() => {
-  //       setLoading(false);
-  //     });
-  // };
+  const generateReport = async () => {
+    setLoading(true);
+    await axios
+      .post("anpr/get-vehicle-visit-report", {
+        fromDate: startDate,
+        toDate: endDate,
+      })
+      .then((response) => {
+        const vehicleVisits = response.data;
+        console.log(vehicleVisits);
+        setReport(vehicleVisits);
+        toast.success("Report generated successfully");
+      })
+      .catch((error) => {
+        toast.error("Failed to generate report");
+        console.error("Error fetching report:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   return (
     <div className="container">
@@ -69,7 +72,7 @@ function VehicleReport() {
         {/* Heading and Breadcrumb Column */}
         <div className="col-md-6 mt-4">
           <div className="d-flex align-items-center">
-            <h2 className="mb-0">Report Generation</h2>
+            <h2 className="mb-0">Vehicle Visit Report</h2>
             <span className="ms-1 fs-2 text-muted">|</span>
             <nav aria-label="breadcrumb" className="d-inline-block ms-2">
               <ol className="breadcrumb bg-transparent m-0 p-0">

@@ -22,42 +22,17 @@ const VehicleReportGrid = ({ report }) => {
   };
 
   const columnDefs = [
-    { headerName: "Vehicle No", field: "vehicleNo" },
-    { headerName: "Vehicle Type", field: "vehicleType" },
+    { headerName: "Vehicle No", field: "vehicle.plate_number" },
+    { headerName: "Vehicle Type", field: "vehicle.vehicle_type" },
 
-    { headerName: "Entry Gate", field: "" },
-    { headerName: "Exit Gate", field: "" },
+    { headerName: "Entry Gate", field: "entryGate.name" },
+    { headerName: "Exit Gate", field: "exitGate.name" },
 
-    { headerName: "Entry Date & Time", field: "visitDateTime" },
+    { headerName: "Entry Date & Time", field: "entryDateTime" },
     { headerName: "Exit Date & Time", field: "exitDateTime" },
     {
       headerName: "Duration Of Stay",
-      field: "duration",
-      valueGetter: (params) => {
-        const entryTime = params.data.visitDateTime;
-        const exitTime = params.data.exitDateTime;
-
-        // Check if either entryTime or exitTime is null
-        if (!entryTime || !exitTime) {
-          return null;
-        }
-
-        // Calculate duration
-        const entry = new Date(entryTime);
-        const exit = new Date(exitTime);
-        const durationInMilliseconds = exit - entry;
-
-        // Convert duration to hours and minutes
-        const hours = Math.floor(durationInMilliseconds / (1000 * 60 * 60));
-        const minutes = Math.floor(
-          (durationInMilliseconds % (1000 * 60 * 60)) / (1000 * 60)
-        );
-
-        // Format duration
-        const formattedDuration = `${hours} hr ${minutes} min`;
-
-        return formattedDuration;
-      },
+      field: "durationOfStay",
     },
 
     {
