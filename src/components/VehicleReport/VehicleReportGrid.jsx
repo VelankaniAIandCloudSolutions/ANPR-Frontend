@@ -8,15 +8,20 @@ import { faCar, faIdCard } from "@fortawesome/free-solid-svg-icons";
 
 const VehicleReportGrid = ({ report }) => {
   const [selectedData, setSelectedData] = useState(null);
+  const [selectedMode, setSelectedMode] = useState(null);
 
-  const handlePlateButtonClick = (data) => {
+  const handlePlateButtonClick = (data, mode) => {
     setSelectedData(data);
+    setSelectedMode(mode);
+
     // Optionally, you can open the modal here
     // setShowPlateModal(true);
   };
 
-  const handlePhotoButtonClick = (data) => {
+  const handlePhotoButtonClick = (data, mode) => {
     setSelectedData(data);
+    setSelectedMode(mode);
+
     // Optionally, you can open the modal here
     // setShowPhotoModal(true);
   };
@@ -36,31 +41,49 @@ const VehicleReportGrid = ({ report }) => {
     },
 
     {
-      headerName: "View Vehicle Plate",
+      headerName: "Entry Photo",
       cellRenderer: (params) => (
         <div style={{ marginLeft: "55px", marginBottom: "56px" }}>
           <button
             type="button"
-            className="btn btn-primary btn-sm mr-3"
+            className="btn btn-primary btn-sm mr-4"
             data-bs-toggle="modal"
             data-bs-target="#vehiclePlateModal"
-            onClick={() => handlePlateButtonClick(params.data)}
+            onClick={() => handlePlateButtonClick(params.data, "entry")}
           >
             <FontAwesomeIcon icon={faIdCard} />
           </button>
-        </div>
-      ),
-    },
-    {
-      headerName: "View Vehicle",
-      cellRenderer: (params) => (
-        <div style={{ marginLeft: "55px", marginBottom: "56px" }}>
           <button
             type="button"
             className="btn btn-primary btn-sm"
             data-bs-toggle="modal"
             data-bs-target="#vehiclePhotoModal"
-            onClick={() => handlePhotoButtonClick(params.data)}
+            onClick={() => handlePhotoButtonClick(params.data, "entry")}
+          >
+            <FontAwesomeIcon icon={faCar} />
+          </button>
+        </div>
+      ),
+    },
+    {
+      headerName: "Exit Photo",
+      cellRenderer: (params) => (
+        <div style={{ marginLeft: "55px", marginBottom: "56px" }}>
+          <button
+            type="button"
+            className="btn btn-primary btn-sm mr-4"
+            data-bs-toggle="modal"
+            data-bs-target="#vehiclePlateModal"
+            onClick={() => handlePlateButtonClick(params.data, "exit")}
+          >
+            <FontAwesomeIcon icon={faIdCard} />
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#vehiclePhotoModal"
+            onClick={() => handlePhotoButtonClick(params.data, "exit")}
           >
             <FontAwesomeIcon icon={faCar} />
           </button>
@@ -114,13 +137,18 @@ const VehicleReportGrid = ({ report }) => {
             >
               {/* Modal body content */}
               {/* Modal body content */}
-              {selectedData && (
+              {selectedData && selectedMode && (
                 <img
                   src={
-                    selectedData.vehiclePlate ||
-                    "https://5.imimg.com/data5/SELLER/Default/2023/6/319435546/YK/SK/FK/45631869/rto-approved-number-plate-500x500.jpeg"
+                    selectedMode === "entry"
+                      ? selectedData.entryNumberPlateImage
+                      : selectedData.exitNumberPlateImage
                   }
-                  alt="Vehicle Plate Photo"
+                  alt={
+                    selectedMode === "entry"
+                      ? "Entry Plate Photo"
+                      : "Exit Plate Photo"
+                  }
                   style={{
                     maxHeight: "100%",
                     maxWidth: "100%",
@@ -171,13 +199,14 @@ const VehicleReportGrid = ({ report }) => {
               style={{ height: "500px" }}
             >
               {/* Modal body content */}
-              {selectedData && (
+              {selectedData && selectedMode && (
                 <img
                   src={
-                    selectedData.vehiclePhoto ||
-                    "https://images.hindustantimes.com/auto/img/2022/08/24/1600x900/NHAI_toll_plaza_1661316843780_1661316843967_1661316843967.jpg"
+                    selectedMode === "entry"
+                      ? selectedData.entryVehicleImage
+                      : selectedData.exitVehicleImage
                   }
-                  alt="Vehicle Photo"
+                  alt={selectedMode === "entry" ? "Entry Photo" : "Exit Photo"}
                   style={{
                     maxHeight: "100%",
                     maxWidth: "100%",

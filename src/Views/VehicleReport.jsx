@@ -10,61 +10,61 @@ function VehicleReport() {
   const [endDate, setEndDate] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // const generateReport = async () => {
-  //   setLoading(true);
-  //   try {
-  //     await new Promise((resolve) => setTimeout(resolve, 2000));
-
-  //     const sampleData = [
-  //       {
-  //         id: 1,
-  //         vehicleNo: "ABC123",
-  //         vehicleType: "Truck",
-  //         gateNo: "Gate 1",
-  //         visitType: "Entry",
-  //         visitDateTime: "2024-03-26 10:00:00",
-  //       },
-  //       {
-  //         id: 2,
-  //         vehicleNo: "XYZ789",
-  //         vehicleType: "Personal Vehicle",
-  //         gateNo: "Gate 2",
-  //         visitType: "Exit",
-  //         visitDateTime: "2024-03-26 11:30:00",
-  //       },
-  //     ];
-  //     setReport(sampleData);
-  //     toast.success("Report generated successfully");
-  //     setLoading(false);
-  //   } catch (error) {
-  //     toast.error("Failed to generate report");
-  //     console.error("Error fetching report:", error);
-  //     setLoading(false);
-  //   }
-  // };
-
-  // State variables for start date and end date
   const generateReport = async () => {
     setLoading(true);
-    await axios
-      .post("anpr/get-vehicle-visit-report", {
-        fromDate: startDate,
-        toDate: endDate,
-      })
-      .then((response) => {
-        const vehicleVisits = response.data;
-        console.log(vehicleVisits);
-        setReport(vehicleVisits);
-        toast.success("Report generated successfully");
-      })
-      .catch((error) => {
-        toast.error("Failed to generate report");
-        console.error("Error fetching report:", error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      const sampleData = [
+        {
+          id: 1,
+          vehicleNo: "ABC123",
+          vehicleType: "Truck",
+          gateNo: "Gate 1",
+          visitType: "Entry",
+          visitDateTime: "2024-03-26 10:00:00",
+        },
+        {
+          id: 2,
+          vehicleNo: "XYZ789",
+          vehicleType: "Personal Vehicle",
+          gateNo: "Gate 2",
+          visitType: "Exit",
+          visitDateTime: "2024-03-26 11:30:00",
+        },
+      ];
+      setReport(sampleData);
+      toast.success("Report generated successfully");
+      setLoading(false);
+    } catch (error) {
+      toast.error("Failed to generate report");
+      console.error("Error fetching report:", error);
+      setLoading(false);
+    }
   };
+
+  // State variables for start date and end date
+  // const generateReport = async () => {
+  //   setLoading(true);
+  //   await axios
+  //     .post("anpr/get-vehicle-visit-report", {
+  //       fromDate: startDate,
+  //       toDate: endDate,
+  //     })
+  //     .then((response) => {
+  //       const vehicleVisits = response.data;
+  //       console.log(vehicleVisits);
+  //       setReport(vehicleVisits);
+  //       toast.success("Report generated successfully");
+  //     })
+  //     .catch((error) => {
+  //       toast.error("Failed to generate report");
+  //       console.error("Error fetching report:", error);
+  //     })
+  //     .finally(() => {
+  //       setLoading(false);
+  //     });
+  // };
 
   return (
     <div className="container">
