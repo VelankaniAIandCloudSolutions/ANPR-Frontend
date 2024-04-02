@@ -8,7 +8,8 @@ import "admin-lte/plugins/fontawesome-free/css/all.min.css";
 import "admin-lte/plugins/overlayScrollbars/css/OverlayScrollbars.min.css";
 import "admin-lte/dist/js/adminlte.min.js";
 import axios from "axios";
-axios.defaults.baseURL = "http://localhost:5000/api/v1/";
+// axios.defaults.baseURL = "http://localhost:5000/api/v1/";
+axios.defaults.baseURL = "http://3.110.62.238:5000/api/v1/";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
