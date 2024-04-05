@@ -94,7 +94,7 @@ function VehicleReport() {
         </div>
       </div>
 
-      <div className="container" style={{ marginTop: "40px" }}>
+      <div className="mt-4">
         {loading ? (
           <div className="d-flex align-items-center">
             <strong role="status">Loading...</strong>
