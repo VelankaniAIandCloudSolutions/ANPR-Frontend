@@ -28,8 +28,28 @@ const VehicleReportGrid = ({ report }) => {
 
   const columnDefs = [
     { headerName: "Vehicle No", field: "vehicle.plate_number" },
-    { headerName: "Vehicle Type", field: "vehicle.vehicle_type" },
+    {
+      headerName: "Vehicle Type",
+      field: "vehicleType",
+      valueGetter: function (params) {
+        // Get the original value of the field
+        const originalValue = params.data.vehicleType;
 
+        // Split the value into words
+        const words = originalValue.split(" ");
+
+        // Capitalize the first letter of the first word
+        const capitalizedFirstWord =
+          words[0].charAt(0).toUpperCase() + words[0].slice(1);
+
+        // Reconstruct the value with the first word capitalized and other words as they are
+        const newValue =
+          capitalizedFirstWord +
+          (words.length > 1 ? " " + words.slice(1).join(" ") : "");
+
+        return newValue;
+      },
+    },
     { headerName: "Entry Gate", field: "entryGate.name" },
     { headerName: "Exit Gate", field: "exitGate.name" },
 
