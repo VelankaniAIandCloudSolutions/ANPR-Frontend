@@ -1,65 +1,82 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-alpine.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCar, faIdCard } from "@fortawesome/free-solid-svg-icons";
+import * as XLSX from "xlsx";
 
 const VehicleReportGrid = ({ report }) => {
   const [selectedData, setSelectedData] = useState(null);
   const [selectedMode, setSelectedMode] = useState(null);
+  // const [exportType, setExportType] = useState(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const gridRef = useRef(null);
 
   const handlePlateButtonClick = (data, mode) => {
     setSelectedData(data);
     setSelectedMode(mode);
-
-    // Optionally, you can open the modal here
-    // setShowPlateModal(true);
   };
 
   const handlePhotoButtonClick = (data, mode) => {
     setSelectedData(data);
     setSelectedMode(mode);
+  };
 
-    // Optionally, you can open the modal here
-    // setShowPhotoModal(true);
+  const exportToCsv = () => {
+    if (gridRef.current && gridRef.current.api) {
+      gridRef.current.api.exportDataAsCsv();
+    } else {
+      console.error("Grid API is not available.");
+    }
+  };
+  const exportToExcel = () => {
+    if (gridRef.current && gridRef.current.api.getColumnDefs) {
+      const columnDefs = gridRef.current.api.getColumnDefs();
+      const columnNames = columnDefs.map((colDef) => colDef.field);
+
+      const rowData = gridRef.current.api
+        .getModel()
+        .rowsToDisplay.map((rowNode) => rowNode.data);
+
+      const excelData = [
+        columnNames,
+        ...rowData.map((row) => columnNames.map((colName) => row[colName])),
+      ];
+
+      const ws = XLSX.utils.aoa_to_sheet(excelData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "CarReport");
+
+      XLSX.writeFile(wb, "CarReport.xlsx");
+    } else {
+      console.error(
+        "Grid reference is not available or getColumnDefs is not a function."
+      );
+    }
   };
 
   const columnDefs = [
-    { headerName: "Vehicle No", field: "vehicle.plate_number" },
+    { headerName: "Vehicle No", field: "vehicleNo" },
     {
       headerName: "Vehicle Type",
       field: "vehicleType",
       valueGetter: function (params) {
-        // Get the original value of the field
         const originalValue = params.data.vehicleType;
-
-        // Split the value into words
         const words = originalValue.split(" ");
-
-        // Capitalize the first letter of the first word
         const capitalizedFirstWord =
           words[0].charAt(0).toUpperCase() + words[0].slice(1);
-
-        // Reconstruct the value with the first word capitalized and other words as they are
-        const newValue =
+        return (
           capitalizedFirstWord +
-          (words.length > 1 ? " " + words.slice(1).join(" ") : "");
-
-        return newValue;
+          (words.length > 1 ? " " + words.slice(1).join(" ") : "")
+        );
       },
     },
     { headerName: "Entry Gate", field: "entryGate.name" },
     { headerName: "Exit Gate", field: "exitGate.name" },
-
     { headerName: "Entry Date & Time", field: "entryDateTime" },
     { headerName: "Exit Date & Time", field: "exitDateTime" },
-    {
-      headerName: "Duration Of Stay",
-      field: "durationOfStay",
-    },
-
+    { headerName: "Duration Of Stay", field: "durationOfStay" },
     {
       headerName: "Entry Photo",
       cellRenderer: (params) => (
@@ -127,104 +144,140 @@ const VehicleReportGrid = ({ report }) => {
   };
 
   return (
-    <div className="ag-theme-quartz" style={{ height: "400px", width: "100%" }}>
-      <AgGridReact {...gridOptions} />
-
-      {/* Vehicle Plate Modal */}
-      <div
-        className="modal fade"
-        id="vehiclePlateModal"
-        tabIndex="-1"
-        aria-labelledby="vehiclePlateModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-lg">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h1 className="modal-title fs-5" id="vehiclePlateModalLabel">
-                Vehicle Plate Photo
-              </h1>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div
-              className="modal-body d-flex justify-content-center align-items-center"
-              style={{ height: "500px" }}
-            >
-              {/* Modal body content */}
-              {/* Modal body content */}
-              {selectedData && selectedMode && (
-                <img
-                  src={
-                    selectedMode === "entry"
-                      ? selectedData.entryNumberPlateImage
-                      : selectedData.exitNumberPlateImage
-                  }
-                  alt={
-                    selectedMode === "entry"
-                      ? "Entry Plate Photo"
-                      : "Exit Plate Photo"
-                  }
-                  style={{
-                    maxHeight: "100%",
-                    maxWidth: "100%",
-                    objectFit: "contain",
-                  }}
-                />
-              )}
-            </div>
-            <div className="modal-footer"></div>
-          </div>
+    <div className="d-flex flex-column" style={{ height: "600px" }}>
+      {/* Dropdown for export options */}
+      <div className="dropdown align-self-end" style={{ marginBottom: "10px" }}>
+        <button
+          className="btn-sm btn-primary dropdown-toggle"
+          type="button"
+          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          aria-haspopup="true"
+          aria-expanded={isDropdownOpen ? "true" : "false"}
+        >
+          Export
+        </button>
+        <div
+          className={`dropdown-menu ${isDropdownOpen ? "show" : ""}`}
+          aria-labelledby="exportDropdown"
+          style={{ zIndex: 1000 }}
+        >
+          <button onClick={exportToCsv} className="dropdown-item" type="button">
+            Export to CSV
+          </button>
+          <button
+            onClick={exportToExcel}
+            className="dropdown-item"
+            type="button"
+          >
+            Export to Excel
+          </button>
         </div>
       </div>
-
-      {/* Vehicle Photo Modal */}
       <div
-        className="modal fade"
-        id="vehiclePhotoModal"
-        tabIndex="-1"
-        aria-labelledby="vehiclePhotoModal"
-        aria-hidden="true"
+        className="ag-theme-quartz mt-2 "
+        style={{ height: "400px", width: "100%" }}
       >
-        <div className="modal-dialog modal-lg">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h1 className="modal-title fs-5" id="vehiclePhotoModal">
-                Vehicle Photo
-              </h1>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
+        <AgGridReact
+          ref={gridRef}
+          {...gridOptions}
+          onGridReady={(params) => {
+            params.api.sizeColumnsToFit();
+          }}
+        />
+
+        <div
+          className="modal fade"
+          id="vehiclePlateModal"
+          tabIndex="-1"
+          aria-labelledby="vehiclePlateModalLabel"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog modal-lg">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h1 className="modal-title fs-5" id="vehiclePlateModalLabel">
+                  Vehicle Plate Photo
+                </h1>
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div
+                className="modal-body d-flex justify-content-center align-items-center"
+                style={{ height: "500px" }}
+              >
+                {selectedData && selectedMode && (
+                  <img
+                    src={
+                      selectedMode === "entry"
+                        ? selectedData.entryNumberPlateImage
+                        : selectedData.exitNumberPlateImage
+                    }
+                    alt={
+                      selectedMode === "entry"
+                        ? "Entry Plate Photo"
+                        : "Exit Plate Photo"
+                    }
+                    style={{
+                      maxHeight: "100%",
+                      maxWidth: "100%",
+                      objectFit: "contain",
+                    }}
+                  />
+                )}
+              </div>
+              <div className="modal-footer"></div>
             </div>
-            <div
-              className="modal-body d-flex justify-content-center align-items-center"
-              style={{ height: "500px" }}
-            >
-              {/* Modal body content */}
-              {selectedData && selectedMode && (
-                <img
-                  src={
-                    selectedMode === "entry"
-                      ? selectedData.entryVehicleImage
-                      : selectedData.exitVehicleImage
-                  }
-                  alt={selectedMode === "entry" ? "Entry Photo" : "Exit Photo"}
-                  style={{
-                    maxHeight: "100%",
-                    maxWidth: "100%",
-                    objectFit: "contain",
-                  }}
-                />
-              )}
+          </div>
+        </div>
+
+        <div
+          className="modal fade"
+          id="vehiclePhotoModal"
+          tabIndex="-1"
+          aria-labelledby="vehiclePhotoModal"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog modal-lg">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h1 className="modal-title fs-5" id="vehiclePhotoModal">
+                  Vehicle Photo
+                </h1>
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div
+                className="modal-body d-flex justify-content-center align-items-center"
+                style={{ height: "500px" }}
+              >
+                {selectedData && selectedMode && (
+                  <img
+                    src={
+                      selectedMode === "entry"
+                        ? selectedData.entryVehicleImage
+                        : selectedData.exitVehicleImage
+                    }
+                    alt={
+                      selectedMode === "entry" ? "Entry Photo" : "Exit Photo"
+                    }
+                    style={{
+                      maxHeight: "100%",
+                      maxWidth: "100%",
+                      objectFit: "contain",
+                    }}
+                  />
+                )}
+              </div>
+              <div className="modal-footer"></div>
             </div>
-            <div className="modal-footer"></div>
           </div>
         </div>
       </div>
