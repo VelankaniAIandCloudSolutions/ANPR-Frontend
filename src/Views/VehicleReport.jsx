@@ -9,6 +9,7 @@ function VehicleReport() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [loading, setLoading] = useState(false);
+
   const generateReport = async () => {
     setLoading(true);
     try {
@@ -21,15 +22,15 @@ function VehicleReport() {
           vehicleType: "Truck",
           gateNo: "Gate 1",
           visitType: "Entry",
-          visitDateTime: "2024-03-26 10:00:00",
+          entryDateTime: "05/04/2024 11:21 PM",
         },
         {
           id: 2,
           vehicleNo: "XYZ789",
-          vehicleType: "personal Vehicle",
+          vehicleType: "Personal Vehicle",
           gateNo: "Gate 2",
           visitType: "Exit",
-          visitDateTime: "2024-03-26 11:30:00",
+          entryDateTime: "05/04/2024 10:00 AM",
         },
       ];
       setReport(sampleData);
@@ -42,6 +43,7 @@ function VehicleReport() {
     }
   };
 
+  // State variables for start date and end date
   // const generateReport = async () => {
   //   setLoading(true);
   //   await axios
@@ -126,7 +128,7 @@ function VehicleReport() {
         </div>
       </div>
 
-      <div className="mt-4">
+      <div className="container" style={{ marginTop: "40px" }}>
         {loading ? (
           <div className="d-flex align-items-center">
             <strong role="status">Loading...</strong>

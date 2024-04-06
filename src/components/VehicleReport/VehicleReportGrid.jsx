@@ -57,6 +57,7 @@ const VehicleReportGrid = ({ report }) => {
   };
 
   const columnDefs = [
+    { headerName: "ID", field: "id" },
     { headerName: "Vehicle No", field: "vehicleNo" },
     {
       headerName: "Vehicle Type",
@@ -74,7 +75,13 @@ const VehicleReportGrid = ({ report }) => {
     },
     { headerName: "Entry Gate", field: "entryGate.name" },
     { headerName: "Exit Gate", field: "exitGate.name" },
-    { headerName: "Entry Date & Time", field: "entryDateTime" },
+    {
+      headerName: "Entry Date & Time",
+      field: "entryDateTime",
+      sortable: true,
+      comparator: customDateComparator,
+    },
+    // { headerName: "Entry Date & Time", field: "entryDateTime" },
     { headerName: "Exit Date & Time", field: "exitDateTime" },
     { headerName: "Duration Of Stay", field: "durationOfStay" },
     {
@@ -142,6 +149,60 @@ const VehicleReportGrid = ({ report }) => {
     pagination: true,
     paginationPageSize: 10,
   };
+  function customDateComparator(dateTime1, dateTime2) {
+    const date1 = parseCustomDateTime(dateTime1);
+    const date2 = parseCustomDateTime(dateTime2);
+
+    return date1.getTime() - date2.getTime();
+
+    console.log("Date 1:", date1);
+    console.log("Date 2:", date2);
+
+    console.log("");
+  }
+  function parseCustomDateTime(dateTimeString) {
+    console.log("Original DateTime String:", dateTimeString);
+
+    // Split date-time string into date and time parts
+    const [datePart, timePart] = dateTimeString.split(" ");
+    console.log("Date Part:", datePart);
+    console.log("Time Part:", timePart);
+
+    // Parse date part into year, month, and day
+    const [month, day, year] = datePart.split("/");
+    console.log("Month:", month);
+    console.log("Day:", day);
+    console.log("Year:", year);
+
+    // Parse time part into hours, minutes, and AM/PM
+    const [time, ampm] = timePart.split(" ");
+    console.log("Time:", time);
+    console.log("AM/PM:", ampm);
+    const [hours, minutes] = time.split(":");
+    console.log("Hours:", hours);
+    console.log("Minutes:", minutes);
+
+    // Convert hours to 24-hour format
+    let parsedHours = parseInt(hours);
+    if (ampm === "PM" && parsedHours !== 12) {
+      parsedHours += 12;
+    } else if (ampm === "AM" && parsedHours === 12) {
+      parsedHours = 0; // Convert 12:00 AM to 00:00
+    }
+    console.log("Adjusted Hours:", parsedHours);
+
+    // Create Date object
+    const parsedDate = new Date(
+      year,
+      month - 1,
+      day,
+      parsedHours,
+      parseInt(minutes)
+    );
+    console.log("Parsed Date:", parsedDate);
+
+    return parsedDate;
+  }
 
   return (
     <div className="d-flex flex-column" style={{ height: "600px" }}>
