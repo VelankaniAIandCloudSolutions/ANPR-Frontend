@@ -82,7 +82,12 @@ const VehicleReportGrid = ({ report }) => {
       comparator: customDateComparator,
     },
     // { headerName: "Entry Date & Time", field: "entryDateTime" },
-    { headerName: "Exit Date & Time", field: "exitDateTime" },
+    {
+      headerName: "Exit Date & Time",
+      field: "exitDateTime",
+      sortable: true,
+      comparator: customDateComparator,
+    },
     { headerName: "Duration Of Stay", field: "durationOfStay" },
     {
       headerName: "Entry Photo",
@@ -149,61 +154,62 @@ const VehicleReportGrid = ({ report }) => {
     pagination: true,
     paginationPageSize: 10,
   };
-  function customDateComparator(dateTime1, dateTime2) {
-    const date1 = parseCustomDateTime(dateTime1);
-    const date2 = parseCustomDateTime(dateTime2);
 
-    return date1.getTime() - date2.getTime();
+  function customDateComparator(date1, date2) {
+    console.log("Comparing dates:", date1, date2);
 
-    console.log("Date 1:", date1);
-    console.log("Date 2:", date2);
+    // Parse dates
+    var parsedDate1 = parseCustomDateString(date1);
+    var parsedDate2 = parseCustomDateString(date2);
 
-    console.log("");
-  }
-  function parseCustomDateTime(dateTimeString) {
-    console.log("Original DateTime String:", dateTimeString);
+    console.log("Parsed dates:", parsedDate1, parsedDate2);
 
-    // Split date-time string into date and time parts
-    const [datePart, timePart] = dateTimeString.split(" ");
-    console.log("Date Part:", datePart);
-    console.log("Time Part:", timePart);
-
-    // Parse date part into year, month, and day
-    const [month, day, year] = datePart.split("/");
-    console.log("Month:", month);
-    console.log("Day:", day);
-    console.log("Year:", year);
-
-    // Parse time part into hours, minutes, and AM/PM
-    const [time, ampm] = timePart.split(" ");
-    console.log("Time:", time);
-    console.log("AM/PM:", ampm);
-    const [hours, minutes] = time.split(":");
-    console.log("Hours:", hours);
-    console.log("Minutes:", minutes);
-
-    // Convert hours to 24-hour format
-    let parsedHours = parseInt(hours);
-    if (ampm === "PM" && parsedHours !== 12) {
-      parsedHours += 12;
-    } else if (ampm === "AM" && parsedHours === 12) {
-      parsedHours = 0; // Convert 12:00 AM to 00:00
+    // Compare dates
+    if (parsedDate1.getTime() === parsedDate2.getTime()) {
+      console.log("Dates are equal.");
+      return 0; // dates are equal
+    } else if (parsedDate1 < parsedDate2) {
+      console.log("Date 1 is less than date 2.");
+      return -1; // date1 is less than date2
+    } else {
+      console.log("Date 1 is greater than date 2.");
+      return 1; // date1 is greater than date2
     }
-    console.log("Adjusted Hours:", parsedHours);
-
-    // Create Date object
-    const parsedDate = new Date(
-      year,
-      month - 1,
-      day,
-      parsedHours,
-      parseInt(minutes)
-    );
-    console.log("Parsed Date:", parsedDate);
-
-    return parsedDate;
   }
 
+  // Function to parse custom date string
+  function parseCustomDateString(dateString) {
+    console.log("Parsing custom date string:", dateString);
+    var parts = dateString.split(/[\s/:]/);
+    console.log("Date string parts:", parts);
+    var month = parseInt(parts[0]) - 1; // months are zero-based in JavaScript
+    var day = parseInt(parts[1]);
+    var year = parseInt(parts[2]);
+    var hours = parseInt(parts[3]);
+    var minutes = parseInt(parts[4]);
+    var ampm = parts[5];
+
+    console.log("Parsed date parts:", {
+      month,
+      day,
+      year,
+      hours,
+      minutes,
+      ampm,
+    });
+
+    // Adjust hours for AM/PM
+    if (ampm === "PM" && hours < 12) {
+      hours += 12;
+    } else if (ampm === "AM" && hours === 12) {
+      hours = 0;
+    }
+
+    let parsedDate = new Date(year, month, day, hours, minutes);
+    console.log("Parsed date:", parsedDate);
+
+    return new Date(year, month, day, hours, minutes);
+  }
   return (
     <div className="d-flex flex-column" style={{ height: "600px" }}>
       {/* Dropdown for export options */}

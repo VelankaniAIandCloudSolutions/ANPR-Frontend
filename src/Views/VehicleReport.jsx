@@ -22,7 +22,7 @@ function VehicleReport() {
           vehicleType: "Truck",
           gateNo: "Gate 1",
           visitType: "Entry",
-          entryDateTime: "05/04/2024 11:21 PM",
+          entryDateTime: "03/04/2024 11:21 PM",
         },
         {
           id: 2,
