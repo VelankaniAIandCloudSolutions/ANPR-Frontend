@@ -57,7 +57,6 @@ const VehicleReportGrid = ({ report }) => {
   };
 
   const columnDefs = [
-    { headerName: "ID", field: "id" },
     { headerName: "Vehicle No", field: "vehicleNo" },
     {
       headerName: "Vehicle Type",
